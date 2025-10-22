@@ -1,2 +1,2 @@
 # product_service
-Microservice for product managment for Bazarteer system
+Microservice for product management for Bazarteer system
