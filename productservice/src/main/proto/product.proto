@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package product;
+option java_multiple_files = true; 
+option java_package = "org.bazarteer.productservice.proto";
+
+enum Condition {
+  NEW = 0;
+  USED = 1;
+  REFURBISHED = 2;
+  DAMAGED = 3;
+}
+
+service ProductService {
+  rpc Publish (PublishRequest) returns (PublishResponse);
+}
+
+message PublishRequest {
+  string userId = 1;
+  string username = 2;
+  string name = 3;
+  string description = 4;
+  Condition condition = 5;
+  string location = 6;
+  double price = 7;
+  int32 stock = 8;
+  repeated string content_urls = 9;
+}
+
+message PublishResponse {
+  int32 productId = 1;
+}
