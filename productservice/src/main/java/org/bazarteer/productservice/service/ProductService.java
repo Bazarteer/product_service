@@ -22,16 +22,20 @@ import java.util.List;
 public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
 
     @Autowired
+    private RabbitMQPublisher publisher;
+
+    @Autowired
     private ProductReposiotry productReposiotry;
 
     @Override
     public void publish(PublishRequest req, StreamObserver<PublishResponse> responseObserver) {
         try {
 
-            org.bazarteer.productservice.model.Condition condition = org.bazarteer.productservice.model.Condition.valueOf(req.getCondition().toString());
+            org.bazarteer.productservice.model.Condition condition = org.bazarteer.productservice.model.Condition
+                    .valueOf(req.getCondition().toString());
             ProtocolStringList protoList = req.getContentUrlsList();
             List<String> content = new ArrayList<>(protoList);
-            
+
             Product product = new Product();
             product.setName(req.getName());
             product.setDescription(req.getDescription());
@@ -46,10 +50,13 @@ public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
 
             productReposiotry.save(product);
 
+            publisher.publishProductPublished(product);
+
             PublishResponse res = PublishResponse.newBuilder().setProductId(product.getId()).build();
             responseObserver.onNext(res);
             responseObserver.onCompleted();
         } catch (Exception e) {
+            System.out.println(e);
             responseObserver.onError(
                     Status.INTERNAL.withDescription("Intenal server error").withCause(e).asRuntimeException());
         }
