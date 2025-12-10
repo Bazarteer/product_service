@@ -9,7 +9,9 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 
+import org.bazarteer.productservice.model.OrderPlacedMessage;
 import org.bazarteer.productservice.model.Product;
+import org.bazarteer.productservice.model.ProductPublishedMessage;
 import org.bazarteer.productservice.proto.ProductServiceGrpc;
 import org.bazarteer.productservice.proto.PublishRequest;
 import org.bazarteer.productservice.proto.PublishResponse;
@@ -60,6 +62,10 @@ public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
             responseObserver.onError(
                     Status.INTERNAL.withDescription("Intenal server error").withCause(e).asRuntimeException());
         }
+    }
+
+    public void handleOrderPlaced(OrderPlacedMessage message) {
+        System.out.println("Test uspesen, dobil id produkta: " + message.getProductId());
     }
 
 }

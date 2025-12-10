@@ -15,6 +15,6 @@ public class RabbitMQPublisher {
 
     public void publishProductPublished(Product product) {
         ProductPublishedMessage message = new ProductPublishedMessage(product.getId(), product.getName());
-        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_PUBLISHED, message);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.PRODUCT_EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY_PUBLISHED, message);
     }
 }

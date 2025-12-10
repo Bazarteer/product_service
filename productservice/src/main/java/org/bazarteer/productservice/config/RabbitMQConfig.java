@@ -13,25 +13,34 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
     
-    public static final String EXCHANGE_NAME = "product-exchange";
+    public static final String PRODUCT_EXCHANGE_NAME = "product-exchange";
+    public static final String ORDER_EXCHANGE_NAME = "order-exchange";
     public static final String QUEUE_PUBLISHED = "product-published-queue";
+    public static final String QUEUE_ORDER_PLACED = "order-placed-queue-product";
     public static final String ROUTING_KEY_PUBLISHED = "product.published";
+    public static final String ROUTING_KEY_ORDER_PLACED = "order.placed";
+
 
     @Bean
-    TopicExchange exchange() {
-        return new TopicExchange(EXCHANGE_NAME);
+    TopicExchange productExchange() {
+        return new TopicExchange(PRODUCT_EXCHANGE_NAME);
     }
 
     @Bean
-    Queue publishedQueue(){
-        return new Queue(QUEUE_PUBLISHED);
+    TopicExchange orderExchange() {
+        return new TopicExchange(ORDER_EXCHANGE_NAME);
+    }
+
+    @Bean
+    Queue orderPlacedQueueProduct(){
+        return new Queue(QUEUE_ORDER_PLACED);
     }
 
     //za vec exchange, queue in posledično bindings samo definiraj nove beane
 
     @Bean
-    Binding publishedBinding(Queue publishedQueue, TopicExchange exchange){
-        return BindingBuilder.bind(publishedQueue).to(exchange).with(ROUTING_KEY_PUBLISHED);
+    Binding orderPlacedBinding(Queue orderPlacedQueueProduct, TopicExchange orderExchange){
+        return BindingBuilder.bind(orderPlacedQueueProduct).to(orderExchange).with(ROUTING_KEY_ORDER_PLACED);
     }
 
     @Bean
