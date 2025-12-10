@@ -1,12 +1,13 @@
 package org.bazarteer.productservice.service;
 
-import org.bazarteer.productservice.repository.ProductReposiotry;
+import org.bazarteer.productservice.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.protobuf.ProtocolStringList;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import jakarta.persistence.EntityNotFoundException;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 import org.bazarteer.productservice.model.OrderPlacedMessage;
@@ -19,6 +20,7 @@ import org.bazarteer.productservice.proto.PublishResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @GrpcService
 public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
@@ -27,7 +29,7 @@ public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
     private RabbitMQPublisher publisher;
 
     @Autowired
-    private ProductReposiotry productReposiotry;
+    private ProductRepository productReposiotry;
 
     @Override
     public void publish(PublishRequest req, StreamObserver<PublishResponse> responseObserver) {
@@ -65,7 +67,24 @@ public class ProductService extends ProductServiceGrpc.ProductServiceImplBase {
     }
 
     public void handleOrderPlaced(OrderPlacedMessage message) {
-        System.out.println("Test uspesen, dobil id produkta: " + message.getProductId());
+        try{ 
+            Optional<Product> optionalProduct = productReposiotry.findById(message.getProductId());
+            if (optionalProduct.isEmpty()){
+                return;
+            }
+
+            Product product = optionalProduct.get();
+            int stock = product.getStock();
+            if (stock > 1){
+                product.setStock(stock - 1);
+                productReposiotry.save(product);
+            }
+            else {
+                productReposiotry.deleteById(message.getProductId());
+            } 
+        } catch (Exception e) {
+            System.out.println("Exception for product : " + message.getProductId() + e);
+        }
     }
 
 }
