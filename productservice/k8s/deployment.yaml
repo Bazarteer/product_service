@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productservice-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: productservice
+  template:
+    metadata:
+      labels:
+        app: productservice
+    spec:
+      containers:
+      - name: productservice
+        image: bazarteerregistry.azurecr.io/productservice:0.0.2
+        ports:
+        - containerPort: 8080
+        - containerPort: 9091
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://product-postgres:5432/product_service_db"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "postgres"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "testpass"
