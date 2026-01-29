@@ -13,6 +13,10 @@ enum Condition {
 
 service ProductService {
   rpc Publish (PublishRequest) returns (PublishResponse);
+
+  rpc GetRecommendedProducts (GetProductsRequest) returns (GetProductsResponse);
+
+  rpc GetProductsByOwner (GetProductsRequest) returns (GetProductsResponse);
 }
 
 message PublishRequest {
@@ -29,4 +33,26 @@ message PublishRequest {
 
 message PublishResponse {
   int32 productId = 1;
+}
+
+message GetProductsRequest {
+  string userId = 1;
+}
+
+message GetProductsResponse {
+  repeated Product products = 1;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  Condition condition = 4;
+  string ownerId = 5;
+  string ownerUsername = 6;
+  string location = 7;
+  double price = 8;
+  int32 stock = 9;
+  repeated string content = 10;
+  string createdAt = 11;
 }

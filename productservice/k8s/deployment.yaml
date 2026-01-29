@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: productservice
-        image: bazarteerregistry.azurecr.io/productservice:0.0.2
+        image: bazarteerregistry.azurecr.io/productservice:0.0.9
         ports:
         - containerPort: 8080
         - containerPort: 9091
